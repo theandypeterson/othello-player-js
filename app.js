@@ -18,11 +18,7 @@ process.argv.forEach(function (val, index, array) {
   }
 });
 
-var moves = Player.findValidMoves(board, player);
-
-var move = Player.getRandomMove(moves);
-
-console.log(move);
+var move = Player.findBestMove(board, player);
 
 console.log('end');
 

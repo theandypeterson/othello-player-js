@@ -1,6 +1,6 @@
 var Direction = require('./direction');
 
-const empty = "-"
+const empty = "-";
 
 var findValidMoves = function (board, myColor) {
   var result = [];
@@ -15,7 +15,7 @@ var findValidMoves = function (board, myColor) {
                             [Direction.up, Direction.left],
                             [Direction.down, Direction.right],
                             [Direction.down, Direction.left]
-                           ]
+                           ];
       directionSet.forEach(function(directions) {
         if (findSandwich(board, directions, position, myColor)) {
           result.push(position);
@@ -24,7 +24,9 @@ var findValidMoves = function (board, myColor) {
       });
     }
   });
-  return result;
+  return result.filter(function(elem, pos) {
+    return result.indexOf(elem) == pos;
+  });
 };
 
 var moveFromPosition = function(position, directions) {
@@ -54,11 +56,64 @@ var findSandwich = function(board, directions, position, myColor, foundOneOpposi
 
 var getRandomMove = function(moves) {
   return moves[Math.floor(Math.random() * moves.length)];
-}
+};
+
+var flipSandwich = function(board, myColor, position, directions) {
+  const nextPosition = moveFromPosition(position, directions);
+  if (board[nextPosition] === myColor) {
+    return board;
+  }
+  board[nextPosition] = myColor;
+  return flipSandwich(board, myColor, nextPosition, directions);
+};
+
+var playMove = function(originalBoard, myColor, position) {
+  var board = JSON.parse(JSON.stringify(originalBoard));
+  const directionSet = [
+                        [Direction.left],
+                        [Direction.right],
+                        [Direction.up],
+                        [Direction.down],
+                        [Direction.up, Direction.right],
+                        [Direction.up, Direction.left],
+                        [Direction.down, Direction.right],
+                        [Direction.down, Direction.left]
+                       ];
+  directionSet.forEach(function(directions) {
+    if (findSandwich(board, directions, position, myColor)) {
+      board = flipSandwich(board, myColor, position, directions);
+    }
+  });
+  board[position] = myColor;
+  return board;
+};
+
+var findBestMove = function(board, myColor) {
+  const moves = findValidMoves(board, myColor);
+  var bestMove = -1;
+  var bestValue = -1;
+  moves.forEach(function(move) {
+    var newBoard = playMove(board, myColor, move);
+    var count = 0;
+    newBoard.forEach(function(element) {
+      if (element === myColor) {
+        count += 1;
+      }
+    });
+    if (count > bestValue) {
+      bestMove = move;
+      bestValue = count;
+    }
+  });
+  return bestMove;
+};
 
 module.exports = {
   findValidMoves: findValidMoves,
   moveFromPosition: moveFromPosition,
   findSandwich: findSandwich,
-  getRandomMove: getRandomMove
+  getRandomMove: getRandomMove,
+  flipSandwich: flipSandwich,
+  playMove: playMove,
+  findBestMove: findBestMove
 };
