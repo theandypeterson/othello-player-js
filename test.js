@@ -1,6 +1,7 @@
 var expect = require('chai').expect;
 var Player = require('./player');
 var Direction = require('./direction');
+var Node = require('./node');
 describe('Player', function() {
   describe('#findValidMoves()', function() {
     var incomingJSON = {
@@ -46,6 +47,21 @@ describe('Player', function() {
       expect(validMoves).to.include(28);
       expect(validMoves).to.include(37);
       expect(validMoves).to.include(39);
+    });
+
+    it('works', function() {
+      const color = "w";
+      const board = ["-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","-","-","-",
+                     "-","-","-","b","-","-","-","-",
+                     "-","-","-","w","-","-","-","-",
+                     "-","-","-","b","-","-","-","-",
+                     "-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","-","-","-"];
+      const moves = Player.findValidMoves(board, color);
+      console.log(moves);
+      expect(moves.length).to.eq(2);
     });
   });
 
@@ -416,5 +432,50 @@ describe('Player', function() {
       const move = Player.findBestMove(board, color);
       expect(move).to.eq(0);
     });
+  });
+
+  describe('node', function() {
+    it('generateTree', function() {
+      const color = "w";
+      var board =   ["-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","-","-","-",
+                     "-","-","-","b","-","-","-","-",
+                     "-","-","-","w","-","-","-","-",
+                     "-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","-","-","-"];
+      var root = Player.generateTree(board, color, 0, 0);
+      expect(root.children.length).to.eq(1);
+
+      color = "w";
+      board =       ["-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","-","-","-",
+                     "-","-","-","b","-","-","-","-",
+                     "-","-","-","w","-","-","-","-",
+                     "-","-","-","b","-","-","-","-",
+                     "-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","-","-","-"];
+      var root2 = Player.generateTree(board, color, 1, 0);
+      expect(root2.children.length).to.eq(2);
+      expect(root2.children[0].children.length).to.eq(1);
+    });
+
+    it.only('does stuff', function() {
+      this.timeout(0);
+      const color = "w";
+      var board =   ["-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","w","-","-",
+                     "-","-","-","b","-","w","-","-",
+                     "-","-","-","b","b","w","-","-",
+                     "-","-","-","b","b","b","-","-",
+                     "-","-","-","-","b","-","-","-",
+                     "-","-","-","-","-","-","-","-",
+                     "-","-","-","-","-","-","-","-"];
+      var root = Player.generateTree(board, color, 4, 0, null);
+      console.log(root);
+      console.log(root.mostPromisingChild());
+    })
   });
 });

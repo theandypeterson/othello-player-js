@@ -1,4 +1,5 @@
 var Direction = require('./direction');
+var Node = require('./node');
 
 const empty = "-";
 
@@ -94,19 +95,46 @@ var findBestMove = function(board, myColor) {
   var bestValue = -1;
   moves.forEach(function(move) {
     var newBoard = playMove(board, myColor, move);
-    var count = 0;
-    newBoard.forEach(function(element) {
-      if (element === myColor) {
-        count += 1;
-      }
-    });
-    if (count > bestValue) {
+    var value = getBoardValue(newBoard, myColor);
+    if (value > bestValue) {
       bestMove = move;
-      bestValue = count;
+      bestValue = value;
     }
   });
   return bestMove;
 };
+
+var getBoardValue = function(board, color) {
+  var count = 0;
+  board.forEach(function(element) {
+    if (element === oppositeColorOf(color)) {
+      count += 1;
+    }
+  });
+  return 100 - count;
+};
+
+var oppositeColorOf = function(color) {
+  return color === "w" ? "b" : "w";
+}
+
+var generateTree = function(board, color, maxLevel, currentLevel, previousMove) {
+  var root = new Node(previousMove, getBoardValue(board, color));
+  var validMoves = findValidMoves(board, color);
+  validMoves.forEach(function(move) {
+    var child = null;
+    var newBoard = playMove(board, color, move);
+    if (maxLevel > currentLevel) {
+      var nextColor = oppositeColorOf(color);
+      child = generateTree(newBoard, nextColor, maxLevel, currentLevel + 1, move);
+    } else {
+      var value = getBoardValue(newBoard, color);
+      child = new Node(move, value);
+    }
+    root.addChild(child);
+  });
+  return root;
+}
 
 module.exports = {
   findValidMoves: findValidMoves,
@@ -115,5 +143,6 @@ module.exports = {
   getRandomMove: getRandomMove,
   flipSandwich: flipSandwich,
   playMove: playMove,
-  findBestMove: findBestMove
+  findBestMove: findBestMove,
+  generateTree: generateTree
 };

@@ -18,8 +18,10 @@ process.argv.forEach(function (val, index, array) {
   }
 });
 
-var move = Player.findBestMove(board, player);
+var tree = Player.generateTree(board, player, 6, 0, null);
+
+var node = tree.mostPromisingChild();
 
 console.log('end');
 
-process.exit(move);
+process.exit(node.move);
