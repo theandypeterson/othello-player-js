@@ -473,7 +473,7 @@ describe('Player', function() {
                      "-","-","-","-","b","-","-","-",
                      "-","-","-","-","-","-","-","-",
                      "-","-","-","-","-","-","-","-"];
-      var root = Player.generateTree(board, color, 4, 0, null);
+      var root = Player.generateTree(board, color, 8, 0, null);
       console.log(root);
       console.log(root.mostPromisingChild());
     })

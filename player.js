@@ -119,16 +119,24 @@ var oppositeColorOf = function(color) {
 }
 
 var generateTree = function(board, color, maxLevel, currentLevel, previousMove) {
+  const numberOfLeafs = 4;
   var root = new Node(previousMove, getBoardValue(board, color));
   var validMoves = findValidMoves(board, color);
+  var pairs = [];
   validMoves.forEach(function(move) {
+    var newBoard = playMove(board, move);
+    pairs.push([move, getBoardValue(newBoard)]);
+  });
+  var approvedList = pairs.sort(function(a,b) { return a[1] - b[1] }).slice(0,numberOfLeafs);
+  approvedList.forEach(function(pair) {
+    var move = pair[0];
+    var value = pair[1];
     var child = null;
     var newBoard = playMove(board, color, move);
     if (maxLevel > currentLevel) {
       var nextColor = oppositeColorOf(color);
       child = generateTree(newBoard, nextColor, maxLevel, currentLevel + 1, move);
     } else {
-      var value = getBoardValue(newBoard, color);
       child = new Node(move, value);
     }
     root.addChild(child);
