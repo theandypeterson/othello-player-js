@@ -3,7 +3,7 @@ var Player = require('./player');
 console.log('start');
 var board = '';
 var player = '';
-var time = 1000;
+var time = 5000;
 process.argv.forEach(function (val, index, array) {
   switch (val) {
     case '-b':
@@ -18,10 +18,26 @@ process.argv.forEach(function (val, index, array) {
   }
 });
 
-var tree = Player.generateTree(board, player, 6, 0, null);
 
-var node = tree.mostPromisingChild();
+var validMoves = Player.findValidMoves(board, player);
+var movesLeft = Player.getMovesLeft(board);
+console.log(movesLeft);
+if (movesLeft > 30) {
+  console.log('changing things up');
+  process.exit(validMoves[validMoves.length-1]);
+}
+var bestMove = -1;
 
-console.log('end');
+// First, get the best move for the next turn
+var bestValue = -6666;
 
-process.exit(node.move);
+validMoves.forEach(function(move) {
+  var nextBoard = Player.playMove(board, player, move);
+  var value = Player.getBoardValue(nextBoard, player);
+  if (value > bestValue) {
+    bestValue = value;
+    bestMove = move;
+  }
+});
+
+process.exit(bestMove);

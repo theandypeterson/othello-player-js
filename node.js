@@ -13,7 +13,7 @@ module.exports = class Node {
 
   mostPromisingChild() {
     var bestChild = null;
-    var bestValue = -1;
+    var bestValue = -666;
     this.children.forEach(function(child) {
       var value = child.getBestValue();
       if (value > bestValue) {
@@ -25,7 +25,7 @@ module.exports = class Node {
   }
 
   getBestValue() {
-    var bestValue = -1;
+    var bestValue = -666;
     if (this.children.length === 0) {
       return this.value;
     }

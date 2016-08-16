@@ -105,13 +105,45 @@ var findBestMove = function(board, myColor) {
 };
 
 var getBoardValue = function(board, color) {
+  var count1 = 0;
+  var count2 = 0;
+  board.forEach(function(element) {
+    if (element === color) {
+      count1 += 1;
+    }
+    else if (element === oppositeColorOf(color)) {
+      count2 += 1;
+    }
+  });
+  if (count2 === 0) {
+    console.log('DING DING DING DING DING!!!!!!!!!');
+    return 7777;
+  }
+  var total = count1 + count2;
+  if ((total === 64) && (count1 > count2) ) {
+    console.log('WINNER WINNER!!!!!!');
+    return 7777;
+  }
+  return count1 - count2;
+};
+
+var getMovesLeft = function(board) {
   var count = 0;
   board.forEach(function(element) {
-    if (element === oppositeColorOf(color)) {
+    if (element === empty) {
       count += 1;
     }
   });
-  return 100 - count;
+  return count;
+};
+
+var getNumEmptySpaces = function(board) {
+  var count = 0;
+  board.forEach(function(element) {
+    if (element === empty) {
+      count += 1;
+    }
+  });
 };
 
 var oppositeColorOf = function(color) {
@@ -119,7 +151,7 @@ var oppositeColorOf = function(color) {
 }
 
 var generateTree = function(board, color, maxLevel, currentLevel, previousMove) {
-  const numberOfLeafs = 4;
+  const numberOfLeafs = 5;
   var root = new Node(previousMove, getBoardValue(board, color));
   var validMoves = findValidMoves(board, color);
   var pairs = [];
@@ -152,5 +184,7 @@ module.exports = {
   flipSandwich: flipSandwich,
   playMove: playMove,
   findBestMove: findBestMove,
-  generateTree: generateTree
+  generateTree: generateTree,
+  getBoardValue: getBoardValue,
+  getMovesLeft: getMovesLeft
 };
