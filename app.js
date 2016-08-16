@@ -19,25 +19,30 @@ process.argv.forEach(function (val, index, array) {
 });
 
 
-var validMoves = Player.findValidMoves(board, player);
 var movesLeft = Player.getMovesLeft(board);
-console.log(movesLeft);
-if (movesLeft > 30) {
-  console.log('changing things up');
-  process.exit(validMoves[validMoves.length-1]);
+
+if (movesLeft > 40) {
+  console.log('BEST VALUE TIME!!!!!');
+  var bestMove = Player.findBestMove(board, player);
+  console.log(bestMove);
+  process.exit(bestMove);
 }
-var bestMove = -1;
+
+var validMoves = Player.findValidMoves(board, player);
+var worstMove = -1;
 
 // First, get the best move for the next turn
-var bestValue = -6666;
+var worstValue = 100;
 
 validMoves.forEach(function(move) {
   var nextBoard = Player.playMove(board, player, move);
-  var value = Player.getBoardValue(nextBoard, player);
-  if (value > bestValue) {
-    bestValue = value;
-    bestMove = move;
+  var otherPlayer = Player.oppositeColorOf(player);
+  var otherPlayersValidMoves = Player.findValidMoves(nextBoard, otherPlayer);
+  var value = otherPlayersValidMoves.length;
+  if (value < worstValue) {
+    worstValue = value;
+    worstMove = move;
   }
 });
 
-process.exit(bestMove);
+process.exit(worstMove);

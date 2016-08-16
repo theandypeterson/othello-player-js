@@ -92,7 +92,7 @@ var playMove = function(originalBoard, myColor, position) {
 var findBestMove = function(board, myColor) {
   const moves = findValidMoves(board, myColor);
   var bestMove = -1;
-  var bestValue = -1;
+  var bestValue = -100;
   moves.forEach(function(move) {
     var newBoard = playMove(board, myColor, move);
     var value = getBoardValue(newBoard, myColor);
@@ -186,5 +186,6 @@ module.exports = {
   findBestMove: findBestMove,
   generateTree: generateTree,
   getBoardValue: getBoardValue,
-  getMovesLeft: getMovesLeft
+  getMovesLeft: getMovesLeft,
+  oppositeColorOf: oppositeColorOf
 };
